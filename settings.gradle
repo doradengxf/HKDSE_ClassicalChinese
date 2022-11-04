@@ -10,6 +10,10 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven {
+            url = uri("https://gitlab.com/api/v4/projects/40619367/packages/maven")
+            name = "GitLab api-external"
+        }
     }
 }
 rootProject.name = "HKDSE Practice Android Sample App"
