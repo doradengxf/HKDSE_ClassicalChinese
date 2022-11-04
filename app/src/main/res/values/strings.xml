@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">HKDSE Practice Android Sample App</string>
+    <string name="web_client_id">403448510901-c6v8dq5umg6mbvi6npg7sqlvdrcnt99g.apps.googleusercontent.com</string>
+    <string name="core_service_url">https://core-mock-uuvkb5nnma-de.a.run.app/</string>
 </resources>
