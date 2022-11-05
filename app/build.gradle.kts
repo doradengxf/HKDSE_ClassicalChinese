@@ -103,16 +103,16 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
 
-    api("io.grpc:grpc-okhttp:${grpcVersion}")
-    api("io.grpc:grpc-protobuf:${grpcVersion}")
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutinesVersion}")
-    api("io.grpc:grpc-stub:${grpcVersion}")
-    api("io.grpc:grpc-kotlin-stub:${grpcKotlinVersion}")
-    api("com.google.protobuf:protobuf-kotlin:${protobufVersion}")
-    api("com.google.protobuf:protobuf-java-util:${protobufVersion}")
+    implementation("io.grpc:grpc-okhttp:${grpcVersion}")
+    implementation("io.grpc:grpc-protobuf-lite:${grpcVersion}")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutinesVersion}")
+    implementation("io.grpc:grpc-stub:${grpcVersion}")
+    implementation("io.grpc:grpc-kotlin-stub:${grpcKotlinVersion}")
+    implementation("com.google.protobuf:protobuf-kotlin-lite:${protobufVersion}")
+    implementation("com.google.protobuf:protobuf-javalite:${protobufVersion}")
 
 
-    api("gg.dsepractice:api-external:0.0.6")
+    implementation("gg.dsepractice:api-external-android:0.0.6")
 }
 
 // Allow references to generated code
