@@ -54,7 +54,7 @@ class MainViewModel constructor(
     }
 
     override fun onCreate(owner: LifecycleOwner) {
-        auth = FirebaseAuth.getInstance()
+        //auth = FirebaseAuth.getInstance()
 
         channel = let {
             val uri = Uri.parse(componentActivity.getString(R.string.core_service_url))
@@ -170,5 +170,9 @@ class MainViewModel constructor(
         } catch (e: Throwable) {
             errMessage = e.message
         }
+    }
+
+    suspend fun LearningMode() {
+
     }
 }
