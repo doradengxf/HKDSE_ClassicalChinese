@@ -11,6 +11,7 @@ import gg.dsepractice.chinese.frontend.sample.ExerciseScreen
 import gg.dsepractice.chinese.frontend.sample.HomeScreen
 import gg.dsepractice.chinese.frontend.sample.LearnScreen
 import gg.dsepractice.chinese.frontend.sample.ui.screen.LoginScreen
+import gg.dsepractice.chinese.frontend.sample.ui.screen.ModeScreen
 import gg.dsepractice.chinese.frontend.sample.ui.theme.NavRoute
 
 
@@ -24,6 +25,8 @@ fun NavGraph(navController: NavHostController) {
         addLoginScreen(navController, this)
 
         addHomeScreen(navController, this)
+
+        addModeScreen(navController,this)
 
         addLearnScreen(navController, this)
 
@@ -52,6 +55,9 @@ private fun addHomeScreen(
     navGraphBuilder.composable(route = NavRoute.Home.path) {
 
         HomeScreen(
+            navigateToMode = {
+                navController.navigate(NavRoute.Mode.path)
+            },
             navigateToLearn = { id, showDetails ->
                 navController.navigate(NavRoute.LearnMode.withArgs(id.toString(), showDetails.toString()))
             },
@@ -62,6 +68,27 @@ private fun addHomeScreen(
             //popUpToLogin= { popUpToLogin(navController) },
         )
     }
+}
+
+private fun addModeScreen(
+    navController: NavHostController,
+    navGraphBuilder: NavGraphBuilder
+){
+    navGraphBuilder.composable(route = NavRoute.Mode.path) {
+
+        ModeScreen(
+            popBackStack = { navController.popBackStack() },
+            navigateToLearn = { id, showDetails ->
+                navController.navigate(NavRoute.LearnMode.withArgs(id.toString(), showDetails.toString()))
+            },
+            navigateToExercise = { id ->
+                navController.navigate(NavRoute.LearnMode.withArgs(id.toString()))
+            },
+            //popBackStack = { navController.popBackStack() }
+            //popUpToLogin= { popUpToLogin(navController) },
+        )
+    }
+
 }
 
 
