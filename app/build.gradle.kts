@@ -120,8 +120,25 @@ dependencies {
     implementation("gg.dsepractice:api-external-android:0.0.6")
     implementation("androidx.navigation:navigation-compose:2.5.3")
 
+    implementation ("androidx.navigation:navigation-compose:2.4.0-alpha06")
+    implementation ("com.google.accompanist:accompanist-navigation-animation:0.16.0")
+
     debugImplementation ("androidx.compose.ui:ui-tooling:1.3.0")
     implementation ("androidx.compose.ui:ui-tooling-preview:1.3.0")
+
+    implementation("com.android.volley:volley:1.2.1")
+
+    var room_version = "2.2.6"
+
+    implementation ("androidx.room:room-runtime:$room_version")
+    annotationProcessor ("androidx.room:room-compiler:$room_version")
+    androidTestImplementation ("androidx.room:room-testing:$room_version")
+    implementation ("androidx.lifecycle:lifecycle-extensions:2.2.0")
+    annotationProcessor ("androidx.lifecycle:lifecycle-compiler:2.3.1")
+    kapt ("androidx.lifecycle:lifecycle-compiler:2.3.0-alpha07")
+    kapt ("androidx.room:room-compiler:2.3.0-alpha02")
+
+
 }
 
 // Allow references to generated code

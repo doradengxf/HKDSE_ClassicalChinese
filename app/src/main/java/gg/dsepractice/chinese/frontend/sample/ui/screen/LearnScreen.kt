@@ -1,9 +1,7 @@
 package gg.dsepractice.chinese.frontend.sample
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.border
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -11,52 +9,41 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
-class ExerciseActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            ExerciseMode()
-        }
-    }
-}
-
-@Composable
-fun TextCell(text: String, modifier: Modifier = Modifier, fontSize: Int = 25 ) {
-
-    val cellModifier = Modifier
-        .padding(8.dp)
-        .border(width = 2.dp, color = Color.Black)
-
-    Text(
-        text = text, cellModifier.then(modifier),
-        fontSize = fontSize.sp,
-        fontWeight = FontWeight.Bold,
-        textAlign = TextAlign.Center
-    )
-}
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 
 
 @Composable
-fun ExerciseMode(){
+fun LearnScreen(
+    id: Int,
+    showDetails: Boolean,
+    popBackStack: () -> Unit,
+    //popUpToLogin: () -> Unit
+) {
+
     Scaffold(
         //Top Bar
         topBar ={
             TopAppBar(
                 navigationIcon = {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = popBackStack) {
                         Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Ir hacia arriba")
                     }
                 },
-                title = { Text(text = "<<師說>>",textAlign = TextAlign.Center) },
+                title = { Text(text = "<<師說>>",textAlign = TextAlign.Center,) },
                 actions = {
                     IconButton(onClick = { /*TODO*/ }) {
                         Icon(
@@ -73,38 +60,38 @@ fun ExerciseMode(){
             Box(
                 contentAlignment = Alignment.CenterStart,
                 modifier = Modifier
-                    .padding(start = 3.dp)
+                    .padding(start = 8.dp)
                     .fillMaxSize()
             )
             {
-                Column{
-                    TextCell( "孔子認為「仁」的最高層次是什麼？",
+                Column() {
+                    TextCell( "古之學者必有師，師者，所以傳道授業解惑也。",
                         Modifier
-                            .size(400.dp, 200.dp)
-                            .padding(5.dp))
+                            .size(400.dp, 280.dp)
+                            .padding(8.dp))
 
-                    TextCell( "1",
+                    Row{
+
+                        Button(onClick = { /*TODO*/ },
+                            modifier = Modifier
+                                .padding(start = 8.dp, end = 32.dp)) {
+                            Text(text = "翻譯")
+                        }
+                        Button(onClick = { /*TODO*/ },
+                            modifier = Modifier
+                                .padding(start = 8.dp, end = 32.dp)) {
+                            Text(text = "筆記")
+                        }
+                    }
+
+                    TextCell( "古代求學的人一定有老師。",
                         Modifier
-                            .size(400.dp, 100.dp)
-                            .padding(5.dp))
-                    TextCell( "2",
-                        Modifier
-                            .size(400.dp, 100.dp)
-                            .padding(5.dp))
-                    TextCell( "3",
-                        Modifier
-                            .size(400.dp, 100.dp)
-                            .padding(5.dp))
-                    TextCell( "4",
-                        Modifier
-                            .size(400.dp, 100.dp)
-                            .padding(5.dp))
+                            .size(400.dp, 300.dp)
+                            .padding(8.dp))
                 }
 
             }
         },
-
-
         //bottom Bar
         bottomBar = {
             val selectedIndex = remember { mutableStateOf(0) }
@@ -115,7 +102,7 @@ fun ExerciseMode(){
                         contentDescription = "Leer después"
                     )
                 },
-                    label = { Text(text = "練習") },
+                    label = { Text(text = "學習") },
                     selected = (selectedIndex.value == 0),
                     onClick = {
                         selectedIndex.value = 0
@@ -145,4 +132,29 @@ fun ExerciseMode(){
             }
         }
     )
+    }
+
+
+
+@Preview(showBackground = true)
+@Composable
+private fun LearnPreview() {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colors.background
+        ) {
+            LearnScreen(
+                id = 7,
+                showDetails = true,
+                popBackStack = {},
+                //popUpToLogin = {}
+            )
+        }
+
 }
+
+
+
+
+
+
