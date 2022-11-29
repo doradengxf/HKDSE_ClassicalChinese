@@ -1,5 +1,8 @@
 package gg.dsepractice.chinese.frontend.sample
 
+import android.service.autofill.OnClickAction
+import android.text.Html
+import android.widget.TextView
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -9,20 +12,32 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 
 @Composable
 fun ExerciseScreen(
-    id: Int,
+    //id: Int,
     popBackStack: () -> Unit,
+    navigateToResult: (Int) -> Unit
     //popUpToLogin: () -> Unit
 ) {
+    val mCounter = remember { mutableStateOf(0)}
+    var score = 0
+
+    //data class Question(val question:String, var a: String, val b:String,var c:String, var d:String, var answer: String )
+    val questions = listOf(
+        QuestionModel("1. 不仁者，不可以久處約，   （約）","利用","窮困","安樂","智","窮困"),
+        QuestionModel("2. 不可以長處樂。   （樂）","利用","智","安樂","接受","安樂"),
+        QuestionModel("3. 仁者安仁，知者利仁。    （智）","智","利用","接受","厭惡","智"),
+        QuestionModel("4. 仁者安仁，知者利仁。    （利）","離棄","厭惡","利用","接受","利用"),
+        QuestionModel("5. 不以其道得之，不處也。   （處）","厭惡","離棄","接受","如何","接受"),
+    )
+
 
     Scaffold(
         //Top Bar
@@ -33,7 +48,7 @@ fun ExerciseScreen(
                         Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Ir hacia arriba")
                     }
                 },
-                title = { Text(text = "<<師說>>",textAlign = TextAlign.Center) },
+                title = { Text(text = "<<論仁、論孝、論君子>>",textAlign = TextAlign.Center) },
                 actions = {
                     IconButton(onClick = { /*TODO*/ }) {
                         Icon(
@@ -50,42 +65,74 @@ fun ExerciseScreen(
             Box(
                 contentAlignment = Alignment.CenterStart,
                 modifier = Modifier
-                    .padding(start = 3.dp)
-                    .fillMaxSize()
+                    .padding(start = 7.dp)
             )
             {
-                Column {
+                Column(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp)) {
                     TextCell(
-                        "孔子認為「仁」的最高層次是什麼？",
+                        questions[mCounter.value].question.toString(),
                         Modifier
-                            .size(400.dp, 200.dp)
+                            .size(400.dp, 150.dp)
                             .padding(5.dp)
                     )
 
-                    TextCell(
-                        "1",
+                    Button(
+                        onClick = {
+                                if (mCounter.value<4){
+                                    mCounter.value++
+                                    if(questions[mCounter.value].option1.toString()==questions[mCounter.value].answer.toString()){
+                                        score++
+                                }else{navigateToResult(score)}}
                         Modifier
-                            .size(400.dp, 100.dp)
+                            .size(400.dp, 125.dp)
                             .padding(5.dp)
-                    )
-                    TextCell(
-                        "2",
+                        }
+                    ){
+                        Text(text = questions[mCounter.value].option1.toString())
+                    }
+
+                    Button(
+                        onClick = {
+                            if (mCounter.value<4){
+                                mCounter.value++
+                                if(questions[mCounter.value].option2.toString()==questions[mCounter.value].answer.toString()){
+                                    score++
+                            }}else{navigateToResult(score)};
                         Modifier
-                            .size(400.dp, 100.dp)
-                            .padding(5.dp)
-                    )
-                    TextCell(
-                        "3",
-                        Modifier
-                            .size(400.dp, 100.dp)
-                            .padding(5.dp)
-                    )
-                    TextCell(
-                        "4",
-                        Modifier
-                            .size(400.dp, 100.dp)
-                            .padding(5.dp)
-                    )
+                            .size(400.dp, 125.dp)
+                            .padding(5.dp)}){
+                        Text(text = questions[mCounter.value].option2.toString())
+                    }
+
+                    Button(
+                        onClick = {
+                                if (mCounter.value<4){
+                                    mCounter.value++
+                                    if(questions[mCounter.value].option3.toString()==questions[mCounter.value].answer.toString()){
+                                        score++
+                                }}else{navigateToResult(score)};
+                            Modifier
+                                .size(400.dp, 125.dp)
+                                .padding(5.dp)}){
+                        Text(text = questions[mCounter.value].option3.toString())
+                    }
+
+                    Button(
+                        onClick = {
+                                if (mCounter.value<4){
+                                    mCounter.value++
+                                    if(questions[mCounter.value].option4.toString()==questions[mCounter.value].answer.toString()){
+                                        score++
+                                    }
+                                }else{navigateToResult(score)};
+                            Modifier
+                                .size(400.dp, 125.dp)
+                                .padding(5.dp)}){
+                        Text(text = questions[mCounter.value].option4.toString())
+                    }
+
                 }
 
             }
@@ -130,7 +177,6 @@ fun ExerciseScreen(
                 }
             }
     )
-
 }
 
 
@@ -144,10 +190,16 @@ fun ExercisePreview() {
         color = MaterialTheme.colors.background
     ) {
         ExerciseScreen(
-            id = 7,
+            //id = 7,
             popBackStack = {},
+            navigateToResult={},
             //popUpToLogin = {}
         )
     }
 }
+
+
+
+
+
 

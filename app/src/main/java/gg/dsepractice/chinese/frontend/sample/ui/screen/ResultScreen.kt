@@ -2,8 +2,6 @@ package gg.dsepractice.chinese.frontend.sample.ui.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -13,24 +11,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import gg.dsepractice.chinese.frontend.sample.LearnScreen
 import gg.dsepractice.chinese.frontend.sample.R
 import gg.dsepractice.chinese.frontend.sample.TextCell
 
-
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ModeScreen(
+
+fun ResultScreen(
+    score: Int,
+    navigateToMode: () -> Unit,
     popBackStack: () -> Unit,
-    navigateToLearn: (Int, Boolean) -> Unit,
-    navigateToExercise: () -> Unit,
-    //popUpToLogin: () -> Unit
-) {
+){
     Scaffold(
         //Top Bar
         topBar ={
@@ -90,65 +83,39 @@ fun ModeScreen(
                         selectedIndex.value = 2
                     })
             }
-        }) {
-        //Main Body
-            Box(
+        },
+
+        content= {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier
-                    .fillMaxSize()
-                    .fillMaxWidth()
-                    .fillMaxHeight()
-            )
-            {
-                Column(modifier = Modifier
-                    .padding(all = 5.dp)
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState()),
-                    horizontalAlignment = Alignment.CenterHorizontally) {
-                    Card(
-                        onClick = { navigateToLearn(7, true) }
-                    ) {
-                        Image(painter = painterResource(id = R.drawable.q4), contentDescription = null)
-                        Column(modifier = Modifier.padding(10.dp)) {
-                            Text("學習模式")
-                        }}
+                    .padding(80.dp)
+                    .fillMaxSize()) {
+                Text(text = "You Got $score scores!",
+                    style = MaterialTheme.typography.h5,
+                    textAlign = TextAlign.Center,)
+                Card() {
+                    Image(painter = painterResource(id = R.drawable.results), contentDescription = null )
 
-                    Card(
-                        elevation = 4.dp,
-                        onClick = {navigateToExercise()}
-                        ) {
-                            Image(painter = painterResource(id = R.drawable.q2), contentDescription = null)
-                            Column(modifier = Modifier.padding(10.dp)) {
-                                Text("練習模式")
-                            }
-                    }
+                }
+            }
+        }
+    )
+}
 
-                    Card(
-                        elevation = 4.dp,
-                    ) {
-                        Image(painter = painterResource(id = R.drawable.q6), contentDescription = null)
-                        Column(modifier = Modifier.padding(10.dp)) {
-                            Text("測試模式")
-                        }
-                    }
-
-            }}
-}}
-
-
-
-@Preview(showBackground = true)
+@Preview
 @Composable
-private fun ModePreview() {
+fun ResultPreview() {
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colors.background
     ) {
-        ModeScreen(
+        ResultScreen(
+            score = 4,
+            navigateToMode = {},
             popBackStack = {},
-            navigateToLearn = { _,_ -> },
-            navigateToExercise = {},
             //popUpToLogin = {}
         )
     }
-
 }

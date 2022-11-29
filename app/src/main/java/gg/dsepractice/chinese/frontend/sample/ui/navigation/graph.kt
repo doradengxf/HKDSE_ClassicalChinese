@@ -12,6 +12,8 @@ import gg.dsepractice.chinese.frontend.sample.HomeScreen
 import gg.dsepractice.chinese.frontend.sample.LearnScreen
 import gg.dsepractice.chinese.frontend.sample.ui.screen.LoginScreen
 import gg.dsepractice.chinese.frontend.sample.ui.screen.ModeScreen
+import gg.dsepractice.chinese.frontend.sample.ui.screen.ResultScreen
+//import gg.dsepractice.chinese.frontend.sample.ui.screen.ScheduleScreen
 import gg.dsepractice.chinese.frontend.sample.ui.theme.NavRoute
 
 
@@ -20,7 +22,7 @@ fun NavGraph(navController: NavHostController) {
 
     NavHost(
         navController = navController,
-        startDestination = NavRoute.Login.path
+        startDestination = NavRoute.Mode.path
     ) {
         addLoginScreen(navController, this)
 
@@ -31,6 +33,8 @@ fun NavGraph(navController: NavHostController) {
         addLearnScreen(navController, this)
 
         addExerciseScreen(navController, this)
+
+        addResultScreen(navController,this)
     }
 }
 
@@ -61,8 +65,8 @@ private fun addHomeScreen(
             navigateToLearn = { id, showDetails ->
                 navController.navigate(NavRoute.LearnMode.withArgs(id.toString(), showDetails.toString()))
             },
-            navigateToExercise = { id ->
-                navController.navigate(NavRoute.LearnMode.withArgs(id.toString()))
+            navigateToExercise = {
+                navController.navigate(NavRoute.ExerciseMode.path)
             },
             //popBackStack = { navController.popBackStack() }
             //popUpToLogin= { popUpToLogin(navController) },
@@ -81,9 +85,7 @@ private fun addModeScreen(
             navigateToLearn = { id, showDetails ->
                 navController.navigate(NavRoute.LearnMode.withArgs(id.toString(), showDetails.toString()))
             },
-            navigateToExercise = { id ->
-                navController.navigate(NavRoute.LearnMode.withArgs(id.toString()))
-            },
+            navigateToExercise = {navController.navigate(NavRoute.ExerciseMode.path)},
             //popBackStack = { navController.popBackStack() }
             //popUpToLogin= { popUpToLogin(navController) },
         )
@@ -109,9 +111,7 @@ private fun addLearnScreen(
             }
         )
     ) { navBackStackEntry ->
-
         val args = navBackStackEntry.arguments
-
         LearnScreen(
             id = args?.getInt(NavRoute.LearnMode.id)!!,
             showDetails = args.getBoolean(NavRoute.LearnMode.showDetails),
@@ -126,20 +126,54 @@ private fun addExerciseScreen(
     navGraphBuilder: NavGraphBuilder
 ) {
     navGraphBuilder.composable(
-        route = NavRoute.ExerciseMode.withArgsFormat(NavRoute.ExerciseMode.id),
-        arguments = listOf(
-            navArgument(NavRoute.ExerciseMode.id) {
-                type = NavType.IntType
-            }
-        )
-    ) { navBackStackEntry ->
-
-        val args = navBackStackEntry.arguments
-
+        route = NavRoute.ExerciseMode.path,
+    ){
         ExerciseScreen(
-            id = args?.getInt(NavRoute.ExerciseMode.id)!!,
             popBackStack = { navController.popBackStack() },
-            //popUpToLogin = { popUpToLogin(navController) }
+            navigateToResult = { result ->
+                navController.navigate(NavRoute.Result.withArgs(result.toString()))
+            }
         )
     }
 }
+
+
+
+private fun addResultScreen(
+    navController: NavHostController,
+    navGraphBuilder: NavGraphBuilder
+){
+    navGraphBuilder.composable(
+        route = NavRoute.Result.withArgsFormat(NavRoute.Result.score),
+        arguments = listOf(
+            navArgument(NavRoute.Result.score) {
+                type = NavType.IntType
+            },
+        )){
+            navBackStackEntry -> val args = navBackStackEntry.arguments
+        ResultScreen(
+            score = args?.getInt(NavRoute.Result.score)!!,
+            navigateToMode = {
+                navController.navigate(NavRoute.Mode.path)
+            },
+            popBackStack = { navController.popBackStack() }
+        )
+    }
+}
+
+
+/*
+private fun addScheduleScreen(
+    navController: NavHostController,
+    navGraphBuilder: NavGraphBuilder
+){
+    navGraphBuilder.composable(route = NavRoute.Schedule.path) {
+
+        ScheduleScreen(
+            popBackStack = { navController.popBackStack() }
+            //popBackStack = { navController.popBackStack() }
+            //popUpToLogin= { popUpToLogin(navController) },
+        )
+    }
+
+}*/

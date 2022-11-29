@@ -18,8 +18,15 @@ sealed class NavRoute(val path: String) {
         val showDetails = "showDetails"
     }
     object ExerciseMode: NavRoute("exercise") {
-        val id = "id"
+        //val id = "id"
     }
+
+    object Result: NavRoute("result"){
+        val score = "score"
+
+    }
+
+    //object Schedule: NavRoute("schedule")
 
     // build navigation path (for screen navigation)
     fun withArgs(vararg args: String): String {

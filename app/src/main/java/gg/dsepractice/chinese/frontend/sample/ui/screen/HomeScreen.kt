@@ -39,7 +39,7 @@ data class Article(val name:String, var painter: Painter, val index:Int)
 fun HomeScreen(
     navigateToMode: () -> Unit,
     navigateToLearn: (Int, Boolean) -> Unit,
-    navigateToExercise: (Int) -> Unit,
+    navigateToExercise: () -> Unit,
     //popBackStack: () -> Unit,
     //popUpToLogin: () -> Unit,
 ) {
