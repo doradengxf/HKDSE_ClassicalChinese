@@ -1,6 +1,8 @@
 package gg.dsepractice.chinese.frontend.sample.ui.screen
 
 import android.graphics.fonts.FontFamily
+import android.media.Image
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
@@ -18,11 +20,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily.Companion.Cursive
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import gg.dsepractice.chinese.frontend.sample.LearnScreen
+import gg.dsepractice.chinese.frontend.sample.R
 
 
 @Composable
@@ -51,7 +55,7 @@ fun LoginScreen(
         val username = remember { mutableStateOf(TextFieldValue()) }
         val password = remember { mutableStateOf(TextFieldValue()) }
 
-        Text(text = "Login", style = TextStyle(fontSize = 40.sp))
+        Image(painter = painterResource(id = R.drawable.login ),contentDescription = null)
 
         Spacer(modifier = Modifier.height(20.dp))
         TextField(

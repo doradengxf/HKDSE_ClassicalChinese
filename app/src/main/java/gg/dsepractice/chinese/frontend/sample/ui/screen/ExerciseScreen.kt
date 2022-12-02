@@ -1,8 +1,6 @@
 package gg.dsepractice.chinese.frontend.sample
 
-import android.service.autofill.OnClickAction
-import android.text.Html
-import android.widget.TextView
+import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -12,7 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,7 +25,8 @@ fun ExerciseScreen(
     //popUpToLogin: () -> Unit
 ) {
     val mCounter = remember { mutableStateOf(0)}
-    var score = 0
+    var score = remember { mutableStateOf(0)}
+    val context = LocalContext.current
 
     //data class Question(val question:String, var a: String, val b:String,var c:String, var d:String, var answer: String )
     val questions = listOf(
@@ -69,8 +68,9 @@ fun ExerciseScreen(
             )
             {
                 Column(modifier = Modifier
-                    .fillMaxWidth()
+                    //.fillMaxWidth()
                     .padding(4.dp)) {
+
                     TextCell(
                         questions[mCounter.value].question.toString(),
                         Modifier
@@ -78,59 +78,76 @@ fun ExerciseScreen(
                             .padding(5.dp)
                     )
 
-                    Button(
-                        onClick = {
-                                if (mCounter.value<4){
-                                    mCounter.value++
-                                    if(questions[mCounter.value].option1.toString()==questions[mCounter.value].answer.toString()){
-                                        score++
-                                }else{navigateToResult(score)}}
-                        Modifier
-                            .size(400.dp, 125.dp)
-                            .padding(5.dp)
-                        }
-                    ){
-                        Text(text = questions[mCounter.value].option1.toString())
-                    }
 
-                    Button(
+                    TextButton(
                         onClick = {
                             if (mCounter.value<4){
+                                if(questions[mCounter.value].option1.toString()==questions[mCounter.value].answer.toString()){
+                                    score.value++ }
                                 mCounter.value++
+                            }
+                            else{
+                                if(questions[mCounter.value].option1.toString()==questions[mCounter.value].answer.toString()){
+                                    score.value++
+                                }
+                                navigateToResult(score.value)}})
+                    {
+                        TextCell(
+                            text = questions[mCounter.value].option1,
+                            Modifier
+                                .size(400.dp, 100.dp)
+                                .padding(5.dp))
+                    }
+
+                    TextButton(
+                        onClick = {
+                            if (mCounter.value<4){
                                 if(questions[mCounter.value].option2.toString()==questions[mCounter.value].answer.toString()){
-                                    score++
-                            }}else{navigateToResult(score)};
-                        Modifier
-                            .size(400.dp, 125.dp)
-                            .padding(5.dp)}){
-                        Text(text = questions[mCounter.value].option2.toString())
+                                    score.value++ }
+                                mCounter.value++}else{
+                                if(questions[mCounter.value].option2.toString()==questions[mCounter.value].answer.toString()){
+                                    score.value++
+                                }
+                                navigateToResult(score.value)}})
+                    {
+                        TextCell(text = questions[mCounter.value].option2,
+                            Modifier
+                                .size(400.dp, 100.dp)
+                                .padding(5.dp))
                     }
 
-                    Button(
+                    TextButton(
                         onClick = {
                                 if (mCounter.value<4){
-                                    mCounter.value++
                                     if(questions[mCounter.value].option3.toString()==questions[mCounter.value].answer.toString()){
-                                        score++
-                                }}else{navigateToResult(score)};
-                            Modifier
-                                .size(400.dp, 125.dp)
-                                .padding(5.dp)}){
-                        Text(text = questions[mCounter.value].option3.toString())
+                                        score.value++ }
+                                    mCounter.value++}else{
+                                    if(questions[mCounter.value].option3.toString()==questions[mCounter.value].answer.toString()){
+                                        score.value++
+                                    }
+                                    navigateToResult(score.value)}})
+                    {
+                        TextCell(text = questions[mCounter.value].option3,
+                        Modifier
+                            .size(400.dp, 100.dp)
+                            .padding(5.dp))
                     }
 
-                    Button(
+                    TextButton(
                         onClick = {
-                                if (mCounter.value<4){
-                                    mCounter.value++
-                                    if(questions[mCounter.value].option4.toString()==questions[mCounter.value].answer.toString()){
-                                        score++
-                                    }
-                                }else{navigateToResult(score)};
+                            if (mCounter.value<4){
+                                if(questions[mCounter.value].option4.toString()==questions[mCounter.value].answer.toString()){
+                                    score.value++ }
+                                mCounter.value++}else{
+                                if(questions[mCounter.value].option4.toString()==questions[mCounter.value].answer.toString()){
+                                    score.value++
+                                }
+                                navigateToResult(score.value)}})
+                    {
+                        TextCell(text = questions[mCounter.value].option4,
                             Modifier
-                                .size(400.dp, 125.dp)
-                                .padding(5.dp)}){
-                        Text(text = questions[mCounter.value].option4.toString())
+                                .size(400.dp, 100.dp)
+                                .padding(5.dp))
                     }
 
                 }
@@ -172,7 +189,8 @@ fun ExerciseScreen(
                         label = { Text(text = "日程") },
                         selected = (selectedIndex.value == 2),
                         onClick = {
-                            selectedIndex.value = 2
+                            selectedIndex.value = 2;
+                            context.startActivity(Intent(context, ScheduleActivity::class.java))
                         })
                 }
             }

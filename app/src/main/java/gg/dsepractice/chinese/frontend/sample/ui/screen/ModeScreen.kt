@@ -29,6 +29,7 @@ fun ModeScreen(
     popBackStack: () -> Unit,
     navigateToLearn: (Int, Boolean) -> Unit,
     navigateToExercise: () -> Unit,
+    navigateToHome: () -> Unit,
     //popUpToLogin: () -> Unit
 ) {
     Scaffold(
@@ -36,7 +37,7 @@ fun ModeScreen(
         topBar ={
             TopAppBar(
                 navigationIcon = {
-                    IconButton(onClick = popBackStack) {
+                    IconButton(onClick = {navigateToHome()}) {
                         Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Ir hacia arriba")
                     }
                 },
@@ -122,14 +123,17 @@ fun ModeScreen(
                             }
                     }
 
+
                     Card(
                         elevation = 4.dp,
                     ) {
-                        Image(painter = painterResource(id = R.drawable.q6), contentDescription = null)
+                        Image(painter = painterResource(id = R.drawable.img_2), contentDescription = null)
                         Column(modifier = Modifier.padding(10.dp)) {
                             Text("測試模式")
                         }
                     }
+
+
 
             }}
 }}
@@ -147,6 +151,7 @@ private fun ModePreview() {
             popBackStack = {},
             navigateToLearn = { _,_ -> },
             navigateToExercise = {},
+            navigateToHome = {}
             //popUpToLogin = {}
         )
     }

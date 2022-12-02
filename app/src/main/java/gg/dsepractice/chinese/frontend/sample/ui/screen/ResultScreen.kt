@@ -29,7 +29,7 @@ fun ResultScreen(
         topBar ={
             TopAppBar(
                 navigationIcon = {
-                    IconButton(onClick = popBackStack) {
+                    IconButton(onClick = navigateToMode) {
                         Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Ir hacia arriba")
                     }
                 },

@@ -1,5 +1,6 @@
 package gg.dsepractice.chinese.frontend.sample.ui.navigation
 
+//import gg.dsepractice.chinese.frontend.sample.ScheduleScreen
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -13,7 +14,6 @@ import gg.dsepractice.chinese.frontend.sample.LearnScreen
 import gg.dsepractice.chinese.frontend.sample.ui.screen.LoginScreen
 import gg.dsepractice.chinese.frontend.sample.ui.screen.ModeScreen
 import gg.dsepractice.chinese.frontend.sample.ui.screen.ResultScreen
-//import gg.dsepractice.chinese.frontend.sample.ui.screen.ScheduleScreen
 import gg.dsepractice.chinese.frontend.sample.ui.theme.NavRoute
 
 
@@ -22,7 +22,7 @@ fun NavGraph(navController: NavHostController) {
 
     NavHost(
         navController = navController,
-        startDestination = NavRoute.Mode.path
+        startDestination = NavRoute.Login.path
     ) {
         addLoginScreen(navController, this)
 
@@ -35,6 +35,7 @@ fun NavGraph(navController: NavHostController) {
         addExerciseScreen(navController, this)
 
         addResultScreen(navController,this)
+
     }
 }
 
@@ -86,6 +87,7 @@ private fun addModeScreen(
                 navController.navigate(NavRoute.LearnMode.withArgs(id.toString(), showDetails.toString()))
             },
             navigateToExercise = {navController.navigate(NavRoute.ExerciseMode.path)},
+            navigateToHome = {navController.navigate(NavRoute.Home.path)}
             //popBackStack = { navController.popBackStack() }
             //popUpToLogin= { popUpToLogin(navController) },
         )
@@ -160,6 +162,7 @@ private fun addResultScreen(
         )
     }
 }
+
 
 
 /*

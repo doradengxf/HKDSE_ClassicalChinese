@@ -26,6 +26,9 @@ sealed class NavRoute(val path: String) {
 
     }
 
+    object AddSchedule: NavRoute("schedule"){
+    }
+
     //object Schedule: NavRoute("schedule")
 
     // build navigation path (for screen navigation)
