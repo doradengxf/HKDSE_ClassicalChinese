@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS speed_match_monitor (
     -- 送礼集中度
     unique_gifter_cnt           BIGINT          COMMENT '独立送礼人数，高赚取但送礼人极少需排查自刷',
     top1_gifter_earn_ratio      DECIMAL(10,4)   COMMENT '第一送礼人贡献占比，接近1多为对刷/自刷',
-    top1_recharge_male_ip_female_cnt BIGINT     COMMENT '充值赚取TOP1男用户所在IP下输送的女用户数',
+    top1_pay_ip_female_cnt      BIGINT          COMMENT '充值TOP1男IP下输送女用户数',
 
     -- 环境聚集
     same_ip_active_user_cnt     BIGINT          COMMENT '同IP活跃人数',
@@ -86,7 +86,7 @@ ALTER TABLE speed_match_monitor ADD COLUMNS (
 );
 
 ALTER TABLE speed_match_monitor ADD COLUMNS (
-    top1_recharge_male_ip_female_cnt BIGINT COMMENT '充值赚取TOP1男用户所在IP下输送的女用户数'
+    top1_pay_ip_female_cnt BIGINT COMMENT '充值TOP1男IP下输送女用户数'
 );
 
 
@@ -149,8 +149,8 @@ SELECT
     SUM(ip_country_mismatch_cnt) AS ip_country_mismatch_cnt,
     AVG(unique_gifter_cnt) AS avg_unique_gifter_cnt,
     AVG(top1_gifter_earn_ratio) AS avg_top1_gifter_earn_ratio,
-    AVG(top1_recharge_male_ip_female_cnt) AS avg_top1_recharge_male_ip_female_cnt,
-    MAX(top1_recharge_male_ip_female_cnt) AS max_top1_recharge_male_ip_female_cnt,
+    AVG(top1_pay_ip_female_cnt) AS avg_top1_pay_ip_female_cnt,
+    MAX(top1_pay_ip_female_cnt) AS max_top1_pay_ip_female_cnt,
     AVG(same_ip_active_user_cnt) AS avg_same_ip_active_user_cnt,
     MAX(same_ip_active_user_cnt) AS max_same_ip_active_user_cnt,
     AVG(same_ip_speed_match_user_cnt) AS avg_same_ip_speed_match_user_cnt,
