@@ -59,6 +59,7 @@ CREATE TABLE IF NOT EXISTS speed_match_monitor (
     -- 环境聚集
     same_ip_active_user_cnt     BIGINT          COMMENT '同IP活跃人数',
     same_ip_speed_match_user_cnt BIGINT         COMMENT '同IP接速配人数',
+    same_ip_7d_earn100_user_cnt BIGINT          COMMENT '同IP近7日累计赚取>=100的人数',
     same_device_active_user_cnt BIGINT          COMMENT '同设备活跃人数，工作室/模拟器农场常用',
     login_ip_cnt                BIGINT          COMMENT '当日登录IP数，频繁切换偏账号共用或代理',
     login_device_cnt            BIGINT          COMMENT '当日登录设备数',
@@ -73,6 +74,14 @@ PARTITIONED BY (
 STORED AS ORC
 TBLPROPERTIES (
     'orc.compress' = 'SNAPPY'
+);
+
+
+-- -----------------------------------------------------------------------------
+-- 已上线表追加字段（新建表只用上面 CREATE，不要再执行本段）
+-- -----------------------------------------------------------------------------
+ALTER TABLE speed_match_monitor ADD COLUMNS (
+    same_ip_7d_earn100_user_cnt BIGINT COMMENT '同IP近7日累计赚取>=100的人数'
 );
 
 
@@ -139,6 +148,8 @@ SELECT
     MAX(same_ip_active_user_cnt) AS max_same_ip_active_user_cnt,
     AVG(same_ip_speed_match_user_cnt) AS avg_same_ip_speed_match_user_cnt,
     MAX(same_ip_speed_match_user_cnt) AS max_same_ip_speed_match_user_cnt,
+    AVG(same_ip_7d_earn100_user_cnt) AS avg_same_ip_7d_earn100_user_cnt,
+    MAX(same_ip_7d_earn100_user_cnt) AS max_same_ip_7d_earn100_user_cnt,
     AVG(same_device_active_user_cnt) AS avg_same_device_active_user_cnt,
     MAX(same_device_active_user_cnt) AS max_same_device_active_user_cnt,
     AVG(login_ip_cnt) AS avg_login_ip_cnt,
