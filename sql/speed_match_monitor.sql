@@ -5,7 +5,7 @@
 -- 用途：营收监控 + 异常定位（刷量 / 工作室 / 自刷送礼 / 账号共用）
 -- =============================================================================
 
-CREATE TABLE IF NOT EXISTS speed_match_monitor (
+CREATE TABLE IF NOT EXISTS rpt_sp_monitor_d (
     female_user_id              BIGINT          COMMENT '女用户ID',
     country                     STRING          COMMENT '国家',
     package_type                STRING          COMMENT '包类型',
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS speed_match_monitor (
     -- 环境聚集
     same_ip_active_user_cnt     BIGINT          COMMENT '同IP活跃人数',
     same_ip_speed_match_user_cnt BIGINT         COMMENT '同IP接速配人数',
-    same_ip_7d_earn100_user_cnt BIGINT          COMMENT '同IP近7日累计赚取>=100的人数',
+    same_ip_7d_earn100_user_cnt BIGINT          COMMENT '同IP近7日累计赚取>=100人数',
     same_device_active_user_cnt BIGINT          COMMENT '同设备活跃人数，工作室/模拟器农场常用',
     login_ip_cnt                BIGINT          COMMENT '当日登录IP数，频繁切换偏账号共用或代理',
     login_device_cnt            BIGINT          COMMENT '当日登录设备数',
@@ -81,11 +81,8 @@ TBLPROPERTIES (
 -- -----------------------------------------------------------------------------
 -- 已上线表追加字段（新建表只用上面 CREATE，不要再执行本段）
 -- -----------------------------------------------------------------------------
-ALTER TABLE speed_match_monitor ADD COLUMNS (
-    same_ip_7d_earn100_user_cnt BIGINT COMMENT '同IP近7日累计赚取>=100的人数'
-);
-
-ALTER TABLE speed_match_monitor ADD COLUMNS (
+ALTER TABLE rpt_sp_monitor_d ADD COLUMNS (
+    same_ip_7d_earn100_user_cnt BIGINT COMMENT '同IP近7日累计赚取>=100人数',
     top1_pay_ip_female_cnt BIGINT COMMENT '充值TOP1男IP下输送女用户数'
 );
 
@@ -94,7 +91,7 @@ ALTER TABLE speed_match_monitor ADD COLUMNS (
 -- 看板汇总视图：按 统计日期 + 国家 + 包类型 + 用户类型 聚合
 -- 金额/次数求和；占比按汇总后重算；用户级风控指标取均值和极值
 -- -----------------------------------------------------------------------------
-CREATE OR REPLACE VIEW v_speed_match_monitor_agg AS
+CREATE OR REPLACE VIEW v_rpt_sp_monitor_d_agg AS
 SELECT
     dt,
     country,
@@ -163,7 +160,7 @@ SELECT
     AVG(login_device_cnt) AS avg_login_device_cnt,
     AVG(total_earn_dod_ratio) AS avg_total_earn_dod_ratio,
     MAX(total_earn_dod_ratio) AS max_total_earn_dod_ratio
-FROM speed_match_monitor
+FROM rpt_sp_monitor_d
 GROUP BY
     dt,
     country,
