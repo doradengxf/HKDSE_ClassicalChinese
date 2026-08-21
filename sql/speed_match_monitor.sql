@@ -29,6 +29,8 @@ CREATE TABLE IF NOT EXISTS speed_match_monitor (
     speed_match_success_cnt     BIGINT          COMMENT '速配成功次数',
     speed_match_duration_sec    BIGINT          COMMENT '速配总时长(秒)',
     avg_match_duration_sec      BIGINT          COMMENT '平均单场时长(秒)，过短偏刷量，过长偏挂机',
+    avg_answer_interval_sec     BIGINT          COMMENT '速配接听平均间隔(秒)，相邻两次接听的时间差均值',
+    min_answer_interval_sec     BIGINT          COMMENT '速配接听最小间隔(秒)，过短偏脚本连点',
     night_match_cnt             BIGINT          COMMENT '凌晨速配次数(0-6点)，工作室/脚本常见',
 
     -- 送礼集中度
@@ -92,6 +94,8 @@ SELECT
         WHEN SUM(speed_match_cnt) = 0 THEN CAST(0 AS BIGINT)
         ELSE CAST(ROUND(SUM(speed_match_duration_sec) / SUM(speed_match_cnt), 0) AS BIGINT)
     END AS avg_match_duration_sec,
+    AVG(avg_answer_interval_sec) AS avg_answer_interval_sec,
+    MIN(min_answer_interval_sec) AS min_answer_interval_sec,
     SUM(night_match_cnt) AS night_match_cnt,
     AVG(unique_gifter_cnt) AS avg_unique_gifter_cnt,
     AVG(top1_gifter_earn_ratio) AS avg_top1_gifter_earn_ratio,
