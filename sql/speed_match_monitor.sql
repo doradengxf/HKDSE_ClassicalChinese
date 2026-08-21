@@ -1,9 +1,8 @@
 -- =============================================================================
 -- 速配监控（女用户）建表语句 — Hive SQL
 -- 统计对象：女用户
--- 维度：国家、包类型、用户类型
--- 指标：速配总赚取、速配赠送赚钱、速配赠送赚取占比、同 IP 活跃人数
 -- 粒度：统计日期 + 女用户
+-- 用途：营收监控 + 异常定位（刷量 / 工作室 / 自刷送礼 / 账号共用）
 -- =============================================================================
 
 CREATE TABLE IF NOT EXISTS speed_match_monitor (
@@ -11,10 +10,34 @@ CREATE TABLE IF NOT EXISTS speed_match_monitor (
     country                     STRING          COMMENT '国家',
     package_type                STRING          COMMENT '包类型',
     user_type                   STRING          COMMENT '用户类型',
+
+    -- 营收
     speed_match_total_earn      DECIMAL(18,2)   COMMENT '速配总赚取',
     speed_match_gift_earn       DECIMAL(18,2)   COMMENT '速配赠送赚钱',
     speed_match_gift_earn_ratio DECIMAL(10,4)   COMMENT '速配赠送赚取占比 = 速配赠送赚钱 / 速配总赚取',
-    same_ip_active_user_cnt     BIGINT          COMMENT '同IP活跃人数'
+    avg_earn_per_match          DECIMAL(18,2)   COMMENT '场均赚取 = 速配总赚取 / 速配次数，畸高常见于对刷',
+
+    -- 活跃与账号质量
+    consecutive_login_days      BIGINT          COMMENT '连续登录天数',
+    register_days               BIGINT          COMMENT '注册天数，新号高赚取需重点排查',
+    speed_match_cnt             BIGINT          COMMENT '速配次数',
+    speed_match_success_cnt     BIGINT          COMMENT '速配成功次数',
+    speed_match_duration_sec    BIGINT          COMMENT '速配总时长(秒)',
+    avg_match_duration_sec      BIGINT          COMMENT '平均单场时长(秒)，过短偏刷量，过长偏挂机',
+    night_match_cnt             BIGINT          COMMENT '凌晨速配次数(0-6点)，工作室/脚本常见',
+
+    -- 送礼集中度
+    unique_gifter_cnt           BIGINT          COMMENT '独立送礼人数，高赚取但送礼人极少需排查自刷',
+    top1_gifter_earn_ratio      DECIMAL(10,4)   COMMENT '第一送礼人贡献占比，接近1多为对刷/自刷',
+
+    -- 环境聚集
+    same_ip_active_user_cnt     BIGINT          COMMENT '同IP活跃人数',
+    same_device_active_user_cnt BIGINT          COMMENT '同设备活跃人数，工作室/模拟器农场常用',
+    login_ip_cnt                BIGINT          COMMENT '当日登录IP数，频繁切换偏账号共用或代理',
+    login_device_cnt            BIGINT          COMMENT '当日登录设备数',
+
+    -- 波动
+    total_earn_dod_ratio        DECIMAL(10,4)   COMMENT '速配总赚取日环比，突增用于定位异常爆发'
 )
 COMMENT '速配监控-女用户'
 PARTITIONED BY (
@@ -28,7 +51,7 @@ TBLPROPERTIES (
 
 -- -----------------------------------------------------------------------------
 -- 看板汇总视图：按 统计日期 + 国家 + 包类型 + 用户类型 聚合
--- 速配赠送赚取占比按汇总后的金额重算，避免对用户级占比直接平均
+-- 金额/次数求和；占比按汇总后重算；用户级风控指标取均值和极值
 -- -----------------------------------------------------------------------------
 CREATE OR REPLACE VIEW v_speed_match_monitor_agg AS
 SELECT
@@ -43,7 +66,31 @@ SELECT
         WHEN SUM(speed_match_total_earn) = 0 THEN CAST(0 AS DECIMAL(10,4))
         ELSE CAST(ROUND(SUM(speed_match_gift_earn) / SUM(speed_match_total_earn), 4) AS DECIMAL(10,4))
     END AS speed_match_gift_earn_ratio,
-    SUM(same_ip_active_user_cnt) AS same_ip_active_user_cnt
+    CASE
+        WHEN SUM(speed_match_cnt) = 0 THEN CAST(0 AS DECIMAL(18,2))
+        ELSE CAST(ROUND(SUM(speed_match_total_earn) / SUM(speed_match_cnt), 2) AS DECIMAL(18,2))
+    END AS avg_earn_per_match,
+    AVG(consecutive_login_days) AS avg_consecutive_login_days,
+    MAX(consecutive_login_days) AS max_consecutive_login_days,
+    AVG(register_days) AS avg_register_days,
+    SUM(speed_match_cnt) AS speed_match_cnt,
+    SUM(speed_match_success_cnt) AS speed_match_success_cnt,
+    SUM(speed_match_duration_sec) AS speed_match_duration_sec,
+    CASE
+        WHEN SUM(speed_match_cnt) = 0 THEN CAST(0 AS BIGINT)
+        ELSE CAST(ROUND(SUM(speed_match_duration_sec) / SUM(speed_match_cnt), 0) AS BIGINT)
+    END AS avg_match_duration_sec,
+    SUM(night_match_cnt) AS night_match_cnt,
+    AVG(unique_gifter_cnt) AS avg_unique_gifter_cnt,
+    AVG(top1_gifter_earn_ratio) AS avg_top1_gifter_earn_ratio,
+    AVG(same_ip_active_user_cnt) AS avg_same_ip_active_user_cnt,
+    MAX(same_ip_active_user_cnt) AS max_same_ip_active_user_cnt,
+    AVG(same_device_active_user_cnt) AS avg_same_device_active_user_cnt,
+    MAX(same_device_active_user_cnt) AS max_same_device_active_user_cnt,
+    AVG(login_ip_cnt) AS avg_login_ip_cnt,
+    AVG(login_device_cnt) AS avg_login_device_cnt,
+    AVG(total_earn_dod_ratio) AS avg_total_earn_dod_ratio,
+    MAX(total_earn_dod_ratio) AS max_total_earn_dod_ratio
 FROM speed_match_monitor
 GROUP BY
     dt,
