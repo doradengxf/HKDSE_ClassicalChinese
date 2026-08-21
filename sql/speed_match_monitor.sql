@@ -29,9 +29,8 @@ CREATE TABLE IF NOT EXISTS rpt_sp_monitor_d (
     speed_match_success_cnt     BIGINT          COMMENT '速配成功次数',
     speed_match_duration_sec    BIGINT          COMMENT '速配总时长(秒)',
     avg_match_duration_sec      BIGINT          COMMENT '平均单场时长(秒)，过短偏刷量，过长偏挂机',
-    avg_answer_latency_ms       BIGINT          COMMENT '从收到速配单到点击接听的平均时延(毫秒)',
+    answer_le_1s_ratio          DOUBLE          COMMENT '速配接听间隔<=1s单数占比',
     min_answer_latency_ms       BIGINT          COMMENT '从收到速配单到点击接听的最小时延(毫秒)，过短偏自动接听脚本',
-    answer_le_1s_ratio          DECIMAL(10,4)   COMMENT '速配接听间隔<=1s单数占比',
     night_match_cnt             BIGINT          COMMENT '凌晨速配次数(0-6点)，工作室/脚本常见',
 
     -- 接听漏斗：脚本几乎全接且时延极稳，真人会拒接/超时
@@ -87,9 +86,7 @@ ALTER TABLE rpt_sp_monitor_d ADD COLUMNS (
     top1_pay_ip_female_cnt BIGINT COMMENT '充值TOP1男IP下输送女用户数'
 );
 
-ALTER TABLE rpt_sp_monitor_d ADD COLUMNS (
-    answer_le_1s_ratio DECIMAL(10,4) COMMENT '速配接听间隔<=1s单数占比'
-);
+ALTER TABLE rpt_sp_monitor_d CHANGE COLUMN avg_answer_latency_s answer_le_1s_ratio DOUBLE COMMENT '速配接听间隔<=1s单数占比';
 
 
 -- -----------------------------------------------------------------------------
@@ -129,9 +126,8 @@ SELECT
         WHEN SUM(speed_match_cnt) = 0 THEN CAST(0 AS BIGINT)
         ELSE CAST(ROUND(SUM(speed_match_duration_sec) / SUM(speed_match_cnt), 0) AS BIGINT)
     END AS avg_match_duration_sec,
-    AVG(avg_answer_latency_ms) AS avg_answer_latency_ms,
-    MIN(min_answer_latency_ms) AS min_answer_latency_ms,
     AVG(answer_le_1s_ratio) AS avg_answer_le_1s_ratio,
+    MIN(min_answer_latency_ms) AS min_answer_latency_ms,
     SUM(night_match_cnt) AS night_match_cnt,
     SUM(speed_match_offer_cnt) AS speed_match_offer_cnt,
     SUM(speed_match_answer_cnt) AS speed_match_answer_cnt,
