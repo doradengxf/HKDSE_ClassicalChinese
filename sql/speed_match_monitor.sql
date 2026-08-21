@@ -11,11 +11,16 @@ CREATE TABLE IF NOT EXISTS speed_match_monitor (
     package_type                STRING          COMMENT '包类型',
     user_type                   STRING          COMMENT '用户类型',
 
-    -- 营收
+    -- 营收（当日）
     speed_match_total_earn      DECIMAL(18,2)   COMMENT '速配总赚取',
     speed_match_gift_earn       DECIMAL(18,2)   COMMENT '速配赠送赚钱',
     speed_match_gift_earn_ratio DECIMAL(10,4)   COMMENT '速配赠送赚取占比 = 速配赠送赚钱 / 速配总赚取',
     avg_earn_per_match          DECIMAL(18,2)   COMMENT '场均赚取 = 速配总赚取 / 速配次数，畸高常见于对刷',
+
+    -- 营收（累计至统计日）
+    speed_match_accum_earn              DECIMAL(18,2)   COMMENT '速配累计赚取',
+    speed_match_accum_gift_earn         DECIMAL(18,2)   COMMENT '速配累计赠送赚取',
+    speed_match_accum_gift_earn_ratio   DECIMAL(10,4)   COMMENT '速配累计赠送赚取占比 = 速配累计赠送赚取 / 速配累计赚取',
 
     -- 活跃与账号质量
     consecutive_login_days      BIGINT          COMMENT '连续登录天数',
@@ -32,6 +37,7 @@ CREATE TABLE IF NOT EXISTS speed_match_monitor (
 
     -- 环境聚集
     same_ip_active_user_cnt     BIGINT          COMMENT '同IP活跃人数',
+    same_ip_speed_match_user_cnt BIGINT         COMMENT '同IP接速配人数',
     same_device_active_user_cnt BIGINT          COMMENT '同设备活跃人数，工作室/模拟器农场常用',
     login_ip_cnt                BIGINT          COMMENT '当日登录IP数，频繁切换偏账号共用或代理',
     login_device_cnt            BIGINT          COMMENT '当日登录设备数',
@@ -66,6 +72,12 @@ SELECT
         WHEN SUM(speed_match_total_earn) = 0 THEN CAST(0 AS DECIMAL(10,4))
         ELSE CAST(ROUND(SUM(speed_match_gift_earn) / SUM(speed_match_total_earn), 4) AS DECIMAL(10,4))
     END AS speed_match_gift_earn_ratio,
+    SUM(speed_match_accum_earn) AS speed_match_accum_earn,
+    SUM(speed_match_accum_gift_earn) AS speed_match_accum_gift_earn,
+    CASE
+        WHEN SUM(speed_match_accum_earn) = 0 THEN CAST(0 AS DECIMAL(10,4))
+        ELSE CAST(ROUND(SUM(speed_match_accum_gift_earn) / SUM(speed_match_accum_earn), 4) AS DECIMAL(10,4))
+    END AS speed_match_accum_gift_earn_ratio,
     CASE
         WHEN SUM(speed_match_cnt) = 0 THEN CAST(0 AS DECIMAL(18,2))
         ELSE CAST(ROUND(SUM(speed_match_total_earn) / SUM(speed_match_cnt), 2) AS DECIMAL(18,2))
@@ -85,6 +97,8 @@ SELECT
     AVG(top1_gifter_earn_ratio) AS avg_top1_gifter_earn_ratio,
     AVG(same_ip_active_user_cnt) AS avg_same_ip_active_user_cnt,
     MAX(same_ip_active_user_cnt) AS max_same_ip_active_user_cnt,
+    AVG(same_ip_speed_match_user_cnt) AS avg_same_ip_speed_match_user_cnt,
+    MAX(same_ip_speed_match_user_cnt) AS max_same_ip_speed_match_user_cnt,
     AVG(same_device_active_user_cnt) AS avg_same_device_active_user_cnt,
     MAX(same_device_active_user_cnt) AS max_same_device_active_user_cnt,
     AVG(login_ip_cnt) AS avg_login_ip_cnt,
