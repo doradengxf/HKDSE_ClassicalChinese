@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS rpt_sp_monitor_d (
     unique_gifter_cnt           BIGINT          COMMENT '独立送礼人数，高赚取但送礼人极少需排查自刷',
     top1_gifter_earn_ratio      DECIMAL(10,4)   COMMENT '第一送礼人贡献占比，接近1多为对刷/自刷',
     top1_pay_ip_female_cnt      BIGINT          COMMENT '充值TOP1男IP下输送女用户数',
+    top1_recharge_ratio         DOUBLE          COMMENT '充值最多的男用户金额 / 该女用户总充值',
 
     -- 环境聚集
     same_ip_active_user_cnt     BIGINT          COMMENT '同IP活跃人数',
@@ -87,6 +88,9 @@ ALTER TABLE rpt_sp_monitor_d ADD COLUMNS (
 );
 
 ALTER TABLE rpt_sp_monitor_d CHANGE COLUMN avg_answer_latency_s answer_le_1s_ratio DOUBLE COMMENT '速配接听间隔<=1s单数占比';
+
+-- 若 top1_recharge_ratio 已存在，只改注释：
+ALTER TABLE rpt_sp_monitor_d CHANGE COLUMN top1_recharge_ratio top1_recharge_ratio DOUBLE COMMENT '充值最多的男用户金额 / 该女用户总充值';
 
 
 -- -----------------------------------------------------------------------------
@@ -150,6 +154,7 @@ SELECT
     AVG(top1_gifter_earn_ratio) AS avg_top1_gifter_earn_ratio,
     AVG(top1_pay_ip_female_cnt) AS avg_top1_pay_ip_female_cnt,
     MAX(top1_pay_ip_female_cnt) AS max_top1_pay_ip_female_cnt,
+    AVG(top1_recharge_ratio) AS avg_top1_recharge_ratio,
     AVG(same_ip_active_user_cnt) AS avg_same_ip_active_user_cnt,
     MAX(same_ip_active_user_cnt) AS max_same_ip_active_user_cnt,
     AVG(same_ip_speed_match_user_cnt) AS avg_same_ip_speed_match_user_cnt,
